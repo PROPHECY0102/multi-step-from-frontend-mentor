@@ -10,12 +10,6 @@ const userInfo: UserInfo = {
   phone: null,
 };
 
-type Plan = {
-  plan: string;
-  monthly: number;
-  yearly: number;
-};
-
 type Step = {
   step: string;
   title: string;
@@ -34,6 +28,12 @@ const steps: Step[] = [
     desc: "You have the option of monthly or yearly billing.",
   },
 ];
+
+type Plan = {
+  plan: string;
+  monthly: number;
+  yearly: number;
+};
 
 const Plans: Plan[] = [
   {
@@ -130,6 +130,12 @@ function stepOneSubmit() {
   return false;
 }
 
+function getCurrentStepProp(currentStep: string) {
+  return steps.find((each) => {
+    return each.step === currentStep;
+  });
+}
+
 function incrementStep(currentStep: string, submitted: boolean) {
   let numCurrentStep = Number(currentStep);
   if (submitted) {
@@ -151,18 +157,12 @@ function proceedNextStep(
   currentStep: string,
   isSubmitted: boolean
 ) {
-  const currentStepProp = steps.find((each) => {
-    return each.step === currentStep;
-  });
   if (isSubmitted) {
     const nextStep = incrementStep(currentStep, isSubmitted);
     btnProceed?.setAttribute("data-curr", nextStep);
-    const nextStepProp = steps.find((each) => {
-      return each.step === nextStep;
-    });
-    return nextStepProp;
+    return getCurrentStepProp(nextStep);
   }
-  return currentStepProp;
+  return getCurrentStepProp(currentStep);
 }
 
 function updateTextContent(element: HTMLElement | null, text: string) {
@@ -222,6 +222,14 @@ function updateStepIndex(
 const btnProceed = document.querySelector<HTMLButtonElement>(".proceed");
 const btnPrevious = document.querySelector<HTMLButtonElement>(".previous");
 
+function decrementStep(step: string | null) {
+  if (step) {
+    const numStep = Number(step) - 1;
+    return String(numStep);
+  }
+  return "1";
+}
+
 function renderBtnPrevious(
   btnPrevious: HTMLButtonElement | null,
   stepProp: Step | undefined
@@ -229,6 +237,8 @@ function renderBtnPrevious(
   if (btnPrevious && stepProp) {
     if (stepProp.step !== "1") {
       btnPrevious.classList.remove("hide");
+    } else {
+      btnPrevious.classList.add("hide");
     }
   }
 }
@@ -242,4 +252,15 @@ btnProceed?.addEventListener("click", () => {
     renderBtnPrevious(btnPrevious, stepProp);
     updateStepIndex(stepProp, sidePanelStepIndex);
   }
+});
+
+btnPrevious?.addEventListener("click", () => {
+  const previousStep = decrementStep(
+    btnProceed?.getAttribute("data-curr") ?? "1"
+  );
+  console.log(previousStep);
+  const stepProp = getCurrentStepProp(previousStep);
+  renderStepTitle(stepProp);
+  renderBtnPrevious(btnPrevious, stepProp);
+  updateStepIndex(stepProp, sidePanelStepIndex);
 });

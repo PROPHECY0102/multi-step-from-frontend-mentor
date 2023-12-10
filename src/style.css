@@ -311,6 +311,100 @@ body {
 
 /* Step 2 */
 
+.form-input-container[data-form="2"] {
+  display: grid;
+  gap: var(--size-400);
+}
+
+.plan-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--size-400);
+}
+
+.plan-buttons {
+  display: grid;
+  gap: var(--size-700);
+  grid-auto-rows: max-content;
+  place-items: start;
+  background-color: transparent;
+  border: var(--border-size-100) solid var(--clr-neutral-400);
+  border-radius: var(--size-300);
+  padding: var(--size-400);
+  transition: all 300ms;
+}
+
+.plan-buttons:hover {
+  border-color: var(--clr-primary-600);
+}
+
+.plan-buttons[data-selected] {
+  border-color: var(--clr-primary-600);
+  background-color: var(--clr-neutral-800);
+}
+
+.plan-desc {
+  display: grid;
+  place-items: start;
+}
+
+.plan-title {
+  font-weight: var(--fw-bold);
+  color: var(--clr-primary-200);
+}
+
+.plan-price {
+  font-weight: var(--fw-medium);
+  color: var(--clr-neutral-200);
+}
+
+.plan-type-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--size-500);
+  background-color: var(--clr-neutral-600);
+  border-radius: var(--size-300);
+  padding-block: var(--size-400);
+}
+
+.plan-type-text {
+  font-weight: var(--fw-medium);
+  color: var(--clr-neutral-200);
+}
+
+.plan-type-text[data-selected] {
+  color: var(--clr-primary-200);
+}
+
+.plan-type-toggle {
+  position: relative;
+  cursor: pointer;
+  width: var(--size-700);
+  aspect-ratio: 2/1;
+  background-color: var(--clr-primary-200);
+  border-radius: var(--size-400);
+}
+
+.toggle-notch {
+  position: absolute;
+  width: var(--size-400);
+  aspect-ratio: 1/1;
+  top: 2px;
+  background-color: var(--clr-neutral-900);
+  border-radius: 100%;
+  transition: all 300ms;
+}
+
+.plan-type-toggle[data-current-type="monthly"] .toggle-notch {
+  left: 2px;
+}
+
+.plan-type-toggle[data-current-type="yearly"] .toggle-notch {
+  left: 26px;
+}
+
 /* Form Button */
 
 .button-container {
@@ -358,5 +452,5 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
