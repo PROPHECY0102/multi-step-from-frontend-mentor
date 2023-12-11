@@ -29,6 +29,11 @@ const steps: Step[] = [
     title: "Select Your Plan",
     desc: "You have the option of monthly or yearly billing.",
   },
+  {
+    step: "3",
+    title: "Pick add-ons",
+    desc: "Add-ons help enhance your gaming experience.",
+  },
 ];
 
 type Plan = {
@@ -61,14 +66,51 @@ const Plans: Plan[] = [
   },
 ];
 
+type AddOn = {
+  option: string;
+  addOnName: string;
+  monthly: number;
+  yearly: number;
+};
+
+const AddOns: AddOn[] = [
+  {
+    option: "1",
+    addOnName: "Online Services",
+    monthly: 1,
+    yearly: 10,
+  },
+  {
+    option: "2",
+    addOnName: "Larger Storage",
+    monthly: 2,
+    yearly: 20,
+  },
+  {
+    option: "3",
+    addOnName: "Customizable Storage",
+    monthly: 2,
+    yearly: 20,
+  },
+];
+
 type formData = {
   userInfo: UserInfo;
-  planChoice: Plan | null;
+  planType: PlanType;
+  planChoice: Plan;
+  addOns: AddOn[];
 };
 
 const InputFormData: formData = {
   userInfo: userInfo,
-  planChoice: null,
+  planType: "monthly",
+  planChoice: {
+    option: "1",
+    planName: "Arcade",
+    monthly: 9,
+    yearly: 90,
+  },
+  addOns: [],
 };
 
 // Utility Functions
@@ -259,6 +301,124 @@ function addPlanTypeToggleEventListener(
   }
 }
 
+function getSelectedPlanOnSubmit(
+  plans: Plan[],
+  planTypeToggle: HTMLButtonElement | null,
+  everyPlanButtons: NodeListOf<HTMLButtonElement>
+) {
+  if (planTypeToggle) {
+    return {
+      planType: getCurrentPlanType(planTypeToggle),
+      planChoice:
+        plans.find((plan) => {
+          return (
+            plan.option ===
+            Array.from(everyPlanButtons)
+              .find((button) => {
+                return button.hasAttribute("data-selected-plan");
+              })
+              ?.getAttribute("data-plan")
+          );
+        }) ?? plans[0],
+    };
+  }
+}
+
+function validatePlan(
+  choosenPlan: { planType: PlanType; planChoice: Plan } | undefined
+) {
+  if (choosenPlan) {
+    InputFormData.planType = choosenPlan.planType;
+    InputFormData.planChoice = choosenPlan.planChoice;
+    swapAddOnPriceType(choosenPlan.planType);
+    return true;
+  }
+  return false;
+}
+
+// Step 3 Functionality
+
+const everyAddOnOptions =
+  document.querySelectorAll<HTMLButtonElement>(".each-add-on");
+const addOnPriceType =
+  document.querySelectorAll<HTMLSpanElement>(".add-on-price-type");
+
+function changeAddOnPrice(
+  planType: PlanType,
+  everyAddOnOptions: NodeListOf<HTMLButtonElement>,
+  addOns: AddOn[]
+) {
+  everyAddOnOptions.forEach((addOnOption) => {
+    const addOn =
+      addOns.find((addOn) => {
+        return addOn.option === addOnOption.getAttribute(".data-add-on");
+      }) ?? addOns[0];
+    const priceSpan = addOnOption.querySelector<HTMLSpanElement>(
+      ".add-on-price-amount"
+    );
+    if (priceSpan) {
+      priceSpan.innerText = String(addOn[planType]);
+    }
+  });
+}
+
+function changeAddOnPriceType(
+  planType: PlanType,
+  addOnPriceType: NodeListOf<HTMLSpanElement>
+) {
+  const updatedAddOnPriceType = planType === "monthly" ? "mo" : "yr";
+  addOnPriceType.forEach((priceType) => {
+    priceType.innerText = updatedAddOnPriceType;
+  });
+}
+
+function swapAddOnPriceType(planType: PlanType) {
+  changeAddOnPriceType(planType, addOnPriceType);
+  changeAddOnPrice(planType, everyAddOnOptions, AddOns);
+}
+
+function addOnEventListener(everyAddOnOptions: NodeListOf<HTMLButtonElement>) {
+  everyAddOnOptions.forEach((addOnOption) => {
+    addOnOption.addEventListener("click", () => {
+      if (addOnOption.hasAttribute("data-selected-add-on")) {
+        addOnOption.removeAttribute("data-selected-add-on");
+        return;
+      }
+      addOnOption.setAttribute("data-selected-add-on", "");
+    });
+  });
+}
+
+function getSelectedAddonSubmit(
+  everyAddOnOptions: NodeListOf<HTMLButtonElement>
+) {
+  return Array.from(everyAddOnOptions)
+    .filter((option) => {
+      return option.hasAttribute("data-selected-add-on");
+    })
+    .map((selected) => {
+      return selected.getAttribute("data-add-on") as string;
+    });
+}
+
+function setUserSelectedAddon(
+  selectedAddons: string[],
+  addons: AddOn[],
+  InputFormData: formData
+) {
+  selectedAddons.forEach((selectedAddon) => {
+    addons.forEach((addon) => {
+      if (addon.option === selectedAddon) {
+        InputFormData.addOns.push(addon);
+      }
+    });
+  });
+  if (InputFormData.addOns.length > 0) {
+    return true;
+  }
+  return false;
+}
+
 // Form Submission and Transition Functionality
 
 // Unique Forms Submission Functions
@@ -273,7 +433,16 @@ function stepOneSubmit() {
   return false;
 }
 
-function stepTwoSubmit() {}
+function stepTwoSubmit() {
+  return validatePlan(
+    getSelectedPlanOnSubmit(Plans, planTypeToggle, everyPlanButtons)
+  );
+}
+
+function stepThreeSubmit() {
+  const selectedAddons = getSelectedAddonSubmit(everyAddOnOptions);
+  return setUserSelectedAddon(selectedAddons, AddOns, InputFormData);
+}
 
 // Functionality for Transitioning to Next Step Form
 
@@ -283,7 +452,7 @@ function getCurrentStepProp(currentStep: string) {
   });
 }
 
-function incrementStep(currentStep: string, submitted: boolean) {
+function validateIncrementStep(currentStep: string, submitted: boolean) {
   let numCurrentStep = Number(currentStep);
   if (submitted) {
     numCurrentStep++;
@@ -292,11 +461,16 @@ function incrementStep(currentStep: string, submitted: boolean) {
 }
 
 function determineCurrentStep(currentStep: string) {
-  let isSubmitted = false;
   if (currentStep === "1") {
-    isSubmitted = stepOneSubmit();
+    return stepOneSubmit();
   }
-  return isSubmitted;
+  if (currentStep === "2") {
+    return stepTwoSubmit();
+  }
+  if (currentStep === "3") {
+    return stepThreeSubmit();
+  }
+  return false;
 }
 
 function proceedNextStep(
@@ -305,7 +479,7 @@ function proceedNextStep(
   isSubmitted: boolean
 ) {
   if (isSubmitted) {
-    const nextStep = incrementStep(currentStep, isSubmitted);
+    const nextStep = validateIncrementStep(currentStep, isSubmitted);
     btnProceed?.setAttribute("data-curr", nextStep);
     return getCurrentStepProp(nextStep);
   }
@@ -449,6 +623,7 @@ btnPrevious?.addEventListener("click", () => {
   const previousStep = decrementStep(
     btnProceed?.getAttribute("data-curr") ?? "1"
   );
+  btnProceed?.setAttribute("data-curr", previousStep);
   const stepProp = getCurrentStepProp(previousStep);
   const formProp = getFormsProp(everyStepForms, stepProp);
   renderStepTitle(stepProp);
@@ -460,4 +635,5 @@ btnPrevious?.addEventListener("click", () => {
 (function init() {
   addPlanButtonEventListener(everyPlanButtons);
   addPlanTypeToggleEventListener(planTypeToggle);
+  addOnEventListener(everyAddOnOptions);
 })();
