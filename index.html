@@ -152,7 +152,7 @@
               </div>
               <div class="form-input-container hidden" data-form="2">
                 <div class="plan-container">
-                  <button class="plan-buttons" data-selected>
+                  <button class="plan-buttons" data-plan="1" data-selected-plan>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="40"
@@ -169,13 +169,17 @@
                       </g>
                     </svg>
                     <div class="plan-desc">
-                      <p class="plan-title">Arcade</p>
+                      <p class="plan-title text-lg">Arcade</p>
                       <p class="plan-price">
-                        $<span id="plan-price-amount">9</span>/mo
+                        $<span class="plan-price-amount">9</span>/<span
+                          class="plan-price-type"
+                          >mo</span
+                        >
                       </p>
+                      <p class="plan-promotion-text hidden">2 months free!</p>
                     </div>
                   </button>
-                  <button class="plan-buttons">
+                  <button class="plan-buttons" data-plan="2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="40"
@@ -192,13 +196,17 @@
                       </g>
                     </svg>
                     <div class="plan-desc">
-                      <p class="plan-title">Advance</p>
+                      <p class="plan-title text-lg">Advance</p>
                       <p class="plan-price">
-                        $<span id="plan-price-amount">12</span>/mo
+                        $<span class="plan-price-amount">12</span>/<span
+                          class="plan-price-type"
+                          >mo</span
+                        >
                       </p>
+                      <p class="plan-promotion-text hidden">2 months free!</p>
                     </div>
                   </button>
-                  <button class="plan-buttons">
+                  <button class="plan-buttons" data-plan="3">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="40"
@@ -215,10 +223,14 @@
                       </g>
                     </svg>
                     <div class="plan-desc">
-                      <p class="plan-title">Pro</p>
+                      <p class="plan-title text-lg">Pro</p>
                       <p class="plan-price">
-                        $<span id="plan-price-amount">15</span>/mo
+                        $<span class="plan-price-amount">15</span>/<span
+                          class="plan-price-type"
+                          >mo</span
+                        >
                       </p>
+                      <p class="plan-promotion-text hidden">2 months free!</p>
                     </div>
                   </button>
                 </div>
