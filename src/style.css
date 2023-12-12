@@ -311,6 +311,272 @@ body {
 
 /* Step 2 */
 
+.form-input-container[data-form="2"] {
+  display: grid;
+  gap: var(--size-400);
+}
+
+.plan-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--size-400);
+}
+
+.plan-buttons {
+  display: grid;
+  gap: var(--size-700);
+  grid-auto-rows: max-content;
+  place-items: start;
+  background-color: transparent;
+  border: var(--border-size-100) solid var(--clr-neutral-400);
+  border-radius: var(--size-300);
+  padding: var(--size-400);
+  transition: all 300ms;
+}
+
+.plan-buttons:hover {
+  border-color: var(--clr-primary-600);
+}
+
+.plan-buttons[data-selected-plan] {
+  border-color: var(--clr-primary-600);
+  background-color: var(--clr-neutral-800);
+}
+
+.plan-desc {
+  display: grid;
+  place-items: start;
+}
+
+.plan-title {
+  font-weight: var(--fw-bold);
+  color: var(--clr-primary-200);
+}
+
+.plan-price {
+  font-weight: var(--fw-medium);
+  color: var(--clr-neutral-200);
+}
+
+.plan-promotion-text {
+  font-weight: var(--fw-medium);
+  color: var(--clr-primary-200);
+}
+
+.plan-type-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--size-500);
+  background-color: var(--clr-neutral-600);
+  border-radius: var(--size-300);
+  padding-block: var(--size-400);
+  transition: color 300ms ease-in;
+}
+
+.plan-type-text {
+  font-weight: var(--fw-medium);
+  color: var(--clr-neutral-200);
+}
+
+.plan-type-text[data-selected] {
+  color: var(--clr-primary-200);
+}
+
+.plan-type-toggle {
+  position: relative;
+  cursor: pointer;
+  width: var(--size-700);
+  aspect-ratio: 2/1;
+  background-color: var(--clr-primary-200);
+  border-radius: var(--size-400);
+}
+
+.toggle-notch {
+  position: absolute;
+  width: var(--size-400);
+  aspect-ratio: 1/1;
+  top: 2px;
+  background-color: var(--clr-neutral-900);
+  border-radius: 100%;
+  transition: all 300ms;
+}
+
+.plan-type-toggle[data-current-type="monthly"] .toggle-notch {
+  left: 2px;
+}
+
+.plan-type-toggle[data-current-type="yearly"] .toggle-notch {
+  left: 25px;
+}
+
+/* Step 3 */
+
+.form-input-container[data-form="3"] {
+  display: grid;
+  gap: var(--size-300);
+}
+
+.each-add-on {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-block: var(--size-400);
+  padding-inline: var(--size-600);
+  background-color: transparent;
+  border: var(--border-size-200) solid var(--clr-neutral-400);
+  border-radius: var(--size-200);
+  transition: all 300ms;
+}
+
+.each-add-on:hover {
+  border-color: var(--clr-primary-600);
+}
+
+.add-on-checkbox-wrapper {
+  position: relative;
+  width: var(--size-500);
+  aspect-ratio: 1/1;
+  border-radius: var(--size-100);
+  border: var(--border-size-200) solid var(--clr-neutral-400);
+}
+
+.each-add-on[data-selected-add-on] {
+  background-color: var(--clr-neutral-800);
+  border-color: var(--clr-primary-600);
+}
+
+.add-on-checkbox {
+  display: none;
+}
+
+.each-add-on[data-selected-add-on] .add-on-checkbox {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-color: var(--clr-primary-600);
+  border-radius: var(--size-100);
+  color: var(--clr-neutral-900);
+}
+
+.add-on-check-container {
+  display: flex;
+  gap: var(--size-500);
+  align-items: center;
+}
+
+.add-on-text-container {
+  display: grid;
+  place-items: start;
+}
+
+.add-on-title {
+  color: var(--clr-primary-200);
+  font-weight: var(--fw-bold);
+}
+
+.add-on-desc {
+  color: var(--clr-neutral-200);
+}
+
+.add-on-price {
+  color: var(--clr-primary-600);
+}
+
+/* Step 4 Summary */
+
+.summary-container {
+  padding-block: var(--size-400);
+  padding-inline: var(--size-500);
+  background-color: var(--clr-neutral-600);
+  border-radius: var(--size-300);
+}
+
+.user-plan-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--size-400);
+  border-bottom: var(--border-size-200) solid var(--clr-neutral-400);
+}
+
+.user-plan-heading,
+.user-plan-price {
+  color: var(--clr-primary-200);
+  font-weight: var(--fw-bold);
+}
+
+.change-plan {
+  cursor: pointer;
+  background-color: transparent;
+  border-style: none;
+  text-decoration: underline;
+  color: var(--clr-neutral-200);
+}
+
+.change-plan:hover {
+  color: var(--clr-primary-600);
+}
+
+.user-add-on-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--size-400);
+}
+
+.user-add-on {
+  color: var(--clr-neutral-200);
+}
+
+.user-add-on-price {
+  color: var(--clr-primary-200);
+}
+
+.total-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--size-400);
+  padding-inline: var(--size-500);
+}
+
+.total-price-label {
+  color: var(--clr-neutral-200);
+}
+
+.total-price {
+  color: var(--clr-primary-600);
+  font-weight: bold;
+}
+
+/* After Form Submission */
+
+.submitted-panel-container {
+  display: grid;
+  place-items: center;
+  padding-inline: var(--size-900);
+}
+
+.submitted-message-container {
+  display: grid;
+  place-items: center;
+}
+
+.submitted-message-heading {
+  color: var(--clr-primary-200);
+  font-weight: var(--fw-bold);
+  margin-top: var(--size-300);
+}
+
+.submitted-message-desc {
+  color: var(--clr-neutral-200);
+  text-align: center;
+  margin-top: var(--size-200);
+}
+
 /* Form Button */
 
 .button-container {
@@ -325,6 +591,17 @@ body {
   cursor: pointer;
   color: var(--clr-neutral-800);
   background-color: var(--clr-primary-200);
+  padding-inline: var(--size-600);
+  padding-block: var(--size-300);
+  border-style: none;
+  border-radius: var(--size-200);
+  transition: all 300ms;
+}
+
+.confirm {
+  cursor: pointer;
+  color: var(--clr-neutral-800);
+  background-color: var(--clr-primary-600);
   padding-inline: var(--size-600);
   padding-block: var(--size-300);
   border-style: none;
@@ -350,13 +627,21 @@ body {
 }
 
 .proceed:hover {
-  opacity: 90%;
-}
-
-.proceed:active {
   opacity: 80%;
 }
 
+.proceed:active {
+  opacity: 70%;
+}
+
+.confirm:hover {
+  opacity: 80%;
+}
+
+.confirm:active {
+  opacity: 70%;
+}
+
 .hidden {
-  display: none;
+  display: none !important;
 }
