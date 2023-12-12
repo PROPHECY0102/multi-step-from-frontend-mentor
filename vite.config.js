@@ -1,1 +1,3 @@
-export default {};
+export default {
+  base: "/multi-step-from-frontend-mentor/",
+};
