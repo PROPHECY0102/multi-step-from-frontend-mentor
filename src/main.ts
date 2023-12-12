@@ -34,6 +34,11 @@ const steps: Step[] = [
     title: "Pick add-ons",
     desc: "Add-ons help enhance your gaming experience.",
   },
+  {
+    step: "4",
+    title: "Finishing Up",
+    desc: "Double-check everything looks OK before confirming.",
+  },
 ];
 
 type Plan = {
@@ -406,6 +411,7 @@ function setUserSelectedAddon(
   addons: AddOn[],
   InputFormData: formData
 ) {
+  InputFormData.addOns = [];
   selectedAddons.forEach((selectedAddon) => {
     addons.forEach((addon) => {
       if (addon.option === selectedAddon) {
@@ -414,12 +420,126 @@ function setUserSelectedAddon(
     });
   });
   if (InputFormData.addOns.length > 0) {
+    buildSummaryUi(InputFormData);
     return true;
   }
   return false;
 }
 
-// Form Submission and Transition Functionality
+// Step 4 Summary
+
+const summaryContainer =
+  document.querySelector<HTMLDivElement>(".summary-container");
+const summaryPlan = document.querySelector<HTMLSpanElement>(".user-plan");
+const summaryPlanType =
+  document.querySelector<HTMLSpanElement>(".user-plan-type");
+const summaryPlanPriceAmount = document.querySelector<HTMLSpanElement>(
+  ".user-plan-price-amount"
+);
+const summaryPlanPriceType = document.querySelector<HTMLSpanElement>(
+  ".user-plan-price-type"
+);
+
+function firstToUpper(string: string) {
+  const charArray = string.split("");
+  charArray[0] = charArray[0].toUpperCase();
+  return charArray.join("");
+}
+
+function setSummaryPlan(InputFormData: formData) {
+  const planType = firstToUpper(InputFormData.planType);
+  const priceType = InputFormData.planType === "monthly" ? "mo" : "yr";
+  if (summaryPlan) {
+    summaryPlan.innerText = InputFormData.planChoice.planName;
+  }
+  if (summaryPlanType) {
+    summaryPlanType.innerText = planType;
+  }
+  if (summaryPlanPriceAmount) {
+    summaryPlanPriceAmount.innerText = String(
+      InputFormData.planChoice[InputFormData.planType]
+    );
+  }
+  if (summaryPlanPriceType) {
+    summaryPlanPriceType.innerText = priceType;
+  }
+}
+
+function resetSummaryAddOn() {
+  document
+    .querySelectorAll<HTMLDivElement>(".user-add-on-container")
+    .forEach((addOnContainer) => {
+      addOnContainer.remove();
+    });
+}
+
+function createSummaryAddOnUi(
+  addOnName: string,
+  addOnPrice: string,
+  priceType: string
+) {
+  const summaryAddOnContainer = document.createElement("div");
+  const summaryAddOn = document.createElement("h2");
+  const summaryAddOnPrice = document.createElement("p");
+  summaryAddOnContainer.classList.add("user-add-on-container");
+  summaryAddOn.classList.add("user-add-on");
+  summaryAddOnPrice.classList.add("user-add-on-price");
+  summaryAddOn.innerText = addOnName;
+  summaryAddOnPrice.innerText = `+$${addOnPrice}/${priceType}`;
+  summaryAddOnContainer.appendChild(summaryAddOn);
+  summaryAddOnContainer.appendChild(summaryAddOnPrice);
+  if (summaryContainer) {
+    summaryContainer.appendChild(summaryAddOnContainer);
+  }
+}
+
+function setSummaryAddOn(InputFormData: formData) {
+  const priceType = InputFormData.planType === "monthly" ? "mo" : "yr";
+  resetSummaryAddOn();
+  InputFormData.addOns.forEach((addOn) => {
+    const addOnName = addOn.addOnName;
+    const addOnPrice = String(addOn[InputFormData.planType]);
+    createSummaryAddOnUi(addOnName, addOnPrice, priceType);
+  });
+}
+
+const summaryTotalLabelType = document.querySelector<HTMLSpanElement>(
+  ".total-price-label-type"
+);
+const summaryTotalPriceAmount = document.querySelector<HTMLSpanElement>(
+  ".total-price-amount"
+);
+const summaryTotalPriceType =
+  document.querySelector<HTMLSpanElement>(".total-price-type");
+
+function setSummaryTotal(InputFormData: formData) {
+  const priceType = InputFormData.planType === "monthly" ? "mo" : "yr";
+  let entries: number[] = [];
+  entries.push(InputFormData.planChoice[InputFormData.planType]);
+  InputFormData.addOns.forEach((addOn) => {
+    entries.push(addOn[InputFormData.planType]);
+  });
+  const total = entries.reduce((accu, entry) => {
+    return accu + entry;
+  }, 0);
+  if (summaryTotalLabelType) {
+    summaryTotalLabelType.innerText = InputFormData.planType.replace("ly", "");
+  }
+  if (summaryTotalPriceAmount) {
+    summaryTotalPriceAmount.innerText = String(total);
+  }
+  if (summaryTotalPriceType) {
+    summaryTotalPriceType.innerText = priceType;
+  }
+}
+
+function buildSummaryUi(InputFormData: formData) {
+  setSummaryPlan(InputFormData);
+  setSummaryAddOn(InputFormData);
+  setSummaryTotal(InputFormData);
+}
+
+// Form Submission and Transition to Next Step Functionality
 
 // Unique Forms Submission Functions
 function stepOneSubmit() {
@@ -452,15 +572,12 @@ function getCurrentStepProp(currentStep: string) {
   });
 }
 
-function validateIncrementStep(currentStep: string, submitted: boolean) {
+function incrementStep(currentStep: string) {
   let numCurrentStep = Number(currentStep);
-  if (submitted) {
-    numCurrentStep++;
-  }
-  return String(numCurrentStep);
+  return String(++numCurrentStep);
 }
 
-function determineCurrentStep(currentStep: string) {
+function processStepSubmission(currentStep: string) {
   if (currentStep === "1") {
     return stepOneSubmit();
   }
@@ -479,7 +596,7 @@ function proceedNextStep(
   isSubmitted: boolean
 ) {
   if (isSubmitted) {
-    const nextStep = validateIncrementStep(currentStep, isSubmitted);
+    const nextStep = incrementStep(currentStep);
     btnProceed?.setAttribute("data-curr", nextStep);
     return getCurrentStepProp(nextStep);
   }
@@ -606,16 +723,50 @@ function renderBtnPrevious(
   }
 }
 
+function confirmEvent() {
+  const mainPanelContainer = document.querySelector<HTMLDivElement>(
+    ".main-panel-container"
+  );
+  const submittedPanelContainer = document.querySelector<HTMLDivElement>(
+    ".submitted-panel-container"
+  );
+  mainPanelContainer?.classList.add("hidden");
+  submittedPanelContainer?.classList.remove("hidden");
+}
+
+function addConfirmEvent(btnConfirm: HTMLButtonElement | null) {
+  btnConfirm?.addEventListener("click", confirmEvent);
+}
+
+function removeConfirmEvent(btnConfirm: HTMLButtonElement | null) {
+  btnConfirm?.removeEventListener("click", confirmEvent);
+}
+
+function switchSubmitButton(currentStep: string | undefined) {
+  const numStep = Number(currentStep) ?? 1;
+  const btnConfirm = document.querySelector<HTMLButtonElement>(".confirm");
+  if (numStep >= 4) {
+    btnProceed?.classList.add("hidden");
+    btnConfirm?.classList.remove("hidden");
+    addConfirmEvent(btnConfirm);
+  } else {
+    btnProceed?.classList.remove("hidden");
+    btnConfirm?.classList.add("hidden");
+    removeConfirmEvent(btnConfirm);
+  }
+}
+
 btnProceed?.addEventListener("click", () => {
   const currentStep = btnProceed.getAttribute("data-curr");
   if (currentStep) {
-    const isSubmitted = determineCurrentStep(currentStep);
+    const isSubmitted = processStepSubmission(currentStep);
     const stepProp = proceedNextStep(btnProceed, currentStep, isSubmitted);
     const formProp = getFormsProp(everyStepForms, stepProp);
     renderStepTitle(stepProp);
     renderForm(formProp);
     renderBtnPrevious(btnPrevious, stepProp);
     updateStepIndex(stepProp, sidePanelStepIndex);
+    switchSubmitButton(stepProp?.step);
   }
 });
 
@@ -630,6 +781,7 @@ btnPrevious?.addEventListener("click", () => {
   renderForm(formProp);
   renderBtnPrevious(btnPrevious, stepProp);
   updateStepIndex(stepProp, sidePanelStepIndex);
+  switchSubmitButton(stepProp?.step);
 });
 
 (function init() {
