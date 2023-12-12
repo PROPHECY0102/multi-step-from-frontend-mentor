@@ -183,6 +183,12 @@ body {
   place-items: center;
 }
 
+@media (max-width: 600px) {
+  .center-container {
+    display: block;
+  }
+}
+
 .panel {
   width: 60vw;
   background-color: var(--clr-neutral-900);
@@ -193,7 +199,30 @@ body {
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
+@media (max-width: 600px) {
+  .panel {
+    display: block;
+    width: 100vw;
+    background-color: transparent;
+    padding: 0px;
+  }
+}
+
 /* Side Panel */
+
+.mobile-side-panel-background {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .mobile-side-panel-background {
+    display: block;
+  }
+
+  .desktop-side-panel-background {
+    display: none;
+  }
+}
 
 .side-panel-wrapper {
   position: relative;
@@ -245,6 +274,12 @@ body {
   padding-block: var(--size-400);
   display: grid;
   place-items: start;
+}
+
+@media (max-width: 600px) {
+  .main-panel-container {
+    padding: 0px;
+  }
 }
 
 /* Form Section */
